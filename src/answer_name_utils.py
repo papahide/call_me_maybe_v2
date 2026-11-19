@@ -29,8 +29,6 @@ def complete_name(model: llm_sdk.Small_LLM_Model,
     name: str = ""
     while not name_closed:
         logits: list[float] = model.get_logits_from_input_ids(prompt + res)
-        top = np.argsort(logits)[-5:][::-1]
-        print([(vocab[t], round(logits[t], 2)) for t in top])
         valid_tokens: list[int] = _valid_tokens_name_filter(name, func_names, vocab)
         if not valid_tokens:
             raise errors.GenerationError("Error generating function name: " \

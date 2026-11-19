@@ -30,9 +30,6 @@ def output_generator(model: llm_sdk.Small_LLM_Model,
                       i_prom: list[val.PromptInput],
                       f_def: list[val.FunctionDefinition],
                       vocab: dict[int, str]) -> list[val.OutputFormat]:
-    for text in ['"replacement": "*"}}', '"replacement": "']:
-        ids = procp.tokenize_str(model, text)
-        print([vocab[i] for i in ids])
     results: list[val.OutputFormat] = []
     for p in i_prom:
         prompt: list[int] = procp.create_function_calling_prompt(model, f_def, p)
