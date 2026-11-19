@@ -1,0 +1,29 @@
+[project]
+name = "call-me-mabye"
+version = "0.1.0"
+description = "Constrained decoding project"
+readme = "README.md"
+authors = [
+    { name = "paapahid", email = "paapahid@student.42.fr" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "llm-sdk",
+    "numpy>=2.4.6",
+    "pydantic>=2.14.3",
+]
+
+[dependency-groups]
+dev = [
+    "flake8>=7.5.0",
+    "mypy>=2.4.1",
+    "pytest>=9.2.0",
+]
+
+[tool.uv.workspace]
+members = [
+    "llm_sdk",
+]
+
+[tool.uv.sources]
+llm-sdk = { workspace = true }
