@@ -5,3 +5,6 @@ data/output
 .pytest_cache/
 __pycache__/
 *.pyc
+tests/
+/edge_cases.zip
+edge_cases/

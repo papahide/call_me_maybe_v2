@@ -27,3 +27,18 @@ members = [
 
 [tool.uv.sources]
 llm-sdk = { workspace = true }
+
+[tool.mypy]
+mypy_path = "./llm_sdk"
+warn_return_any = true
+warn_unused_ignores = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+exclude = [
+    "^llm_sdk/",
+    "^tests/",
+    "^edge_cases/",
+    ".*_generated\\.py$",
+]

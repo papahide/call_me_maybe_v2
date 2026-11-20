@@ -5,24 +5,55 @@ import textwrap
 
 
 def tokenize_str(model: llm_sdk.Small_LLM_Model, string: str) -> list[int]:
+    """
+    Converts a string into a list of token IDs.
+
+    Args:
+        model: the LLM model used for tokenization.
+        string: the text to tokenize.
+
+    Return:
+        A list containing the token IDs.
+    """
     tensor = model.encode(string)
     tokens: list[list[int]] = tensor.tolist()
     return tokens[0]
 
 
 def serialize_prompt(prompt: str) -> str:
+    """
+    Serializes a prompt string into JSON format.
+
+    Args:
+        prompt: the input prompt.
+
+    Return:
+        The prompt serialized as a JSON string.
+    """
     return json.dumps(prompt)
 
 
 def create_forced_prefix(model: llm_sdk.Small_LLM_Model,
                          prompt: val.PromptInput) -> list[int]:
+    """
+    Creates the initial JSON prefix containing the input prompt.
+
+    Args:
+        model: the LLM model used for tokenization.
+        prompt: the input prompt data.
+
+    Return:
+        A list containing the prefix token IDs.
+    """
     prompt_json = serialize_prompt(prompt.prompt)
     default = f'{{"prompt": {prompt_json}, "name": "'
     return tokenize_str(model, default)
 
 
 def get_system_rules() -> str:
-    """Return the instructions for the function-calling model."""
+    """
+    Returns the system instructions for function calling.
+    """
     return textwrap.dedent(r"""
     You are a function-calling assistant. You never reply with prose:
     you turn the user's request into exactly one call to one of the
@@ -43,25 +74,26 @@ def get_system_rules() -> str:
     - number: write only the numeric value.
     - Remove or delete: the replacement is the empty string "".
     - regex: the function runs it as a regular expression. Match every
-      item of the kind described, not only the ones in the request:
-      use character classes and quantifiers ([...], +, *) instead of
-      listing the items you see. A plain word only matches itself.
-      Never start or end a pattern with |.
+      item of the kind described.
     - In JSON a backslash is doubled: the regex \s+ is "\\s+".
-
-    Example (invented function; use only the functions in <tools>):
-    User: Replace every dot in 'a.b.c' with hashes
-    Assistant: {"prompt": "Replace every dot in 'a.b.c' with hashes",
-    "name": "fn_replace_text",
-    "parameters": {"text": "a.b.c", "pattern": "[.]",
-    "replacement": "#"}}
-    Wrong: "replacement": "hashes". Right: "replacement": "#".
     """).strip() + "\n"
 
 
 def create_function_calling_prompt(model: llm_sdk.Small_LLM_Model,
                                    f_def: list[val.FunctionDefinition],
                                    prompt: val.PromptInput) -> list[int]:
+    """
+    Creates the prompt containing the function definitions,
+    system instructions and user request.
+
+    Args:
+        model: the LLM model used for tokenization.
+        f_def: the available function definitions.
+        prompt: the user's input prompt.
+
+    Return:
+        A list containing the prompt token IDs.
+    """
     functions = "\n".join(
         json.dumps(func.model_dump(mode="json"))
         for func in f_def

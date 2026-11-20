@@ -1,7 +1,6 @@
 PYTHON  = python3
 PACKAGE    = src
 UV      = uv
-PIP		= pip
 
 .PHONY: install run debug lint lint-strict clean
 
